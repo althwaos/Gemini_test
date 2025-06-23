@@ -4,31 +4,31 @@ import google.generativeai as genai
 # ────────────────────────────────
 # CONFIGURE GEMINI
 # ────────────────────────────────
-# For quick testing, we hard-code the key here.
-# (On Streamlit Cloud you can also set it as a Secret.)
+# (Hard-code for now; you can move into secrets later)
 genai.configure(api_key="AIzaSyDy_17Hn9m6Zd3CAeOxvLdJjTlLZizdttk")
 
 # ────────────────────────────────
-# 1) UI: prompt input
+# UI
 # ────────────────────────────────
 st.title("🤖 Gemini Sanity-Check")
-user_input = st.text_input("Ask Gemini something:", "Hello, Gemini!")
 
+prompt = st.text_input("Ask Gemini something:", "Hello, Gemini!")
 if st.button("Send"):
     # ────────────────────────────────
-    # 2) CALL the chat completions API
+    # CALL Gemini
     # ────────────────────────────────
-    response = genai.chat.completions.create(
+    resp = genai.chat.completions.create(
         model="gemini-pro",
         temperature=0.5,
         messages=[
             {"author": "system", "content": "You are a helpful assistant."},
-            {"author": "user",   "content": user_input},
+            {"author": "user",   "content": prompt},
         ],
     )
+    reply = resp.choices[0].message.content
+
     # ────────────────────────────────
-    # 3) DISPLAY the reply
+    # DISPLAY
     # ────────────────────────────────
-    reply = response.choices[0].message.content
     st.subheader("Gemini says:")
     st.write(reply)
