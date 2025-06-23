@@ -1,19 +1,34 @@
-# test_gemini.py
-
+import streamlit as st
 from google import genai
 
-# 1) configure with your Gemini API key
+# ───────────────────────────────────────
+# CONFIGURE GEMINI
+# ───────────────────────────────────────
+# Hard-code your key here just to validate the flow:
 client = genai.Client(api_key="AIzaSyDy_17Hn9m6Zd3CAeOxvLdJjTlLZizdttk")
 
-# 2) call a trivial chat completion
-response = client.chat.completions.create(
-    model="gemini-pro",            # or "gemini-ultra"
-    temperature=0.5,
-    messages=[
-        {"author": "system", "content": "You are a helpful assistant."},
-        {"author": "user",   "content": "Hello, Gemini! How are you today?"}
-    ],
-)
+# ───────────────────────────────────────
+# BUILD A TINY UI
+# ───────────────────────────────────────
+st.title("🤖 Gemini Sanity‐Check")
 
-# 3) print out Gemini’s reply
-print("Gemini says:", response.choices[0].message.content)
+user_input = st.text_input("Ask Gemini something:", value="Hello, Gemini!")
+if st.button("Send"):
+    # ───────────────────────────────────────
+    # CALL Gemini
+    # ───────────────────────────────────────
+    response = client.chat.completions.create(
+        model="gemini-pro",
+        temperature=0.5,
+        messages=[
+            {"author": "system", "content": "You are a helpful assistant."},
+            {"author": "user",   "content": user_input},
+        ],
+    )
+    reply = response.choices[0].message.content
+
+    # ───────────────────────────────────────
+    # DISPLAY
+    # ───────────────────────────────────────
+    st.subheader("Gemini says:")
+    st.write(reply)
